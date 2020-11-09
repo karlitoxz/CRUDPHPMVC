@@ -14,4 +14,7 @@ Readme
 		$registro = ControladorFormularios::ctrRegistro();
 		echo $registro;
 
+		https://www.youtube.com/watch?v=WdTx3DRSWYU&ab_channel=TutorialesatuAlcance
+		27:57
+
 

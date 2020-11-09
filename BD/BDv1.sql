@@ -21,16 +21,20 @@ USE `cursophp`;
 CREATE TABLE IF NOT EXISTS `registros` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` text DEFAULT NULL,
-  `password` varchar(50) DEFAULT NULL,
   `email` text DEFAULT NULL,
-  `fecha` timestamp NULL DEFAULT NULL,
+  `password` varchar(50) DEFAULT NULL,
+  `fecha` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
 
--- Volcando datos para la tabla cursophp.registros: ~1 rows (aproximadamente)
+-- Volcando datos para la tabla cursophp.registros: ~4 rows (aproximadamente)
 /*!40000 ALTER TABLE `registros` DISABLE KEYS */;
-INSERT INTO `registros` (`id`, `nombre`, `password`, `email`, `fecha`) VALUES
-	(1, 'juan01', '1234', 'juan@juan.com', '2020-11-08 18:37:17');
+INSERT INTO `registros` (`id`, `nombre`, `email`, `password`, `fecha`) VALUES
+	(1, 'juan01', 'juan@juan.com', '1234', '2020-11-08 18:37:17'),
+	(2, 'juan02', 'juan02@juan.com', '2345', NULL),
+	(3, 'juan03', 'juan03@juan.com', '3456', NULL),
+	(4, 'juan04', 'juan04@juan.com', '4567', '2020-11-08 00:00:00'),
+	(5, 'juan05', 'juan05@juan.com', '5678', '2020-11-08 20:37:13');
 /*!40000 ALTER TABLE `registros` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
