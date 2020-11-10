@@ -15,6 +15,7 @@ Readme
 		echo $registro;
 
 		https://www.youtube.com/watch?v=WdTx3DRSWYU&ab_channel=TutorialesatuAlcance
-		27:57
+		28:42
+		https://www.youtube.com/watch?v=8HGvj2w88vE&ab_channel=TutorialesatuAlcance
 
 

@@ -20,6 +20,14 @@
 		}
 	//Registro
 
+	//Listar registros
+			public function ctrSRegistros(){
+
+				$tabla = 'registros';
+				$respuesta = formulariosModelo::mdlSRegistros($tabla);
+				return $respuesta;
+			}
+	//Listar registros
 	}
 
 ?>

@@ -23,6 +23,19 @@ class formulariosModelo{
 	}
 	//Registro________________
 
+	//Listar Registros________________
+		
+	static public function mdlSRegistros($tabla){
+		$stmt = Conexion::conectar()->prepare("SELECT *,DATE_FORMAT(fecha,'%d/%m/%Y') as fecha FROM $tabla");
+
+		if ($stmt->execute()) {
+			return $stmt->fetchAll();
+		}else{
+			print_r(Conexion::conectar()->errorInfo());
+		}
+		$stmt = null;
+	}
+	//Listar Registros________________
 
 
 
