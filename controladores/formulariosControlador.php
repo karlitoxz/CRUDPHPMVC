@@ -28,6 +28,27 @@
 				return $respuesta;
 			}
 	//Listar registros
+
+	//Login
+		public function ctrIngreso(){
+			if (isset($_POST['ingEmail'])) {
+				$tabla = 'registros';
+				$item = 'email';
+				$valor = $_POST['ingEmail'];
+				$respuesta = formulariosModelo::mdlLogin($tabla,$item,$valor);
+				//print_r($respuesta);
+				if ($respuesta['email'] == $_POST['ingEmail'] && $respuesta['password'] == $_POST['ingPassword']) {
+					//echo '<div class="alert alert-success">ingreso exitoso</div>';
+					echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href); window.location = "index.php?pagina=inicio";}</script>';
+				} else {
+					echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
+					echo '<div class="alert alert-warning">Ingreso no exitoso</div>';
+				}
+				
+
+			}
+		}			
+	//Login
 	}
 
 ?>
