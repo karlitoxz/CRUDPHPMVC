@@ -14,8 +14,9 @@ Readme
 		$registro = ControladorFormularios::ctrRegistro();
 		echo $registro;
 
-		https://www.youtube.com/watch?v=WdTx3DRSWYU&ab_channel=TutorialesatuAlcance
-		28:42
-		https://www.youtube.com/watch?v=8HGvj2w88vE&ab_channel=TutorialesatuAlcance
+		Subir a github: git push origin master
 
+		https://www.youtube.com/watch?v=WdTx3DRSWYU&ab_channel=TutorialesatuAlcance
+		https://www.youtube.com/watch?v=8HGvj2w88vE&ab_channel=TutorialesatuAlcance
+		23:49
 
