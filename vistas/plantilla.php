@@ -109,6 +109,7 @@
 					if ($_GET['pagina'] == 'registro'||
 						$_GET['pagina'] == 'ingreso'||
 						$_GET['pagina'] == 'inicio'||
+						$_GET['pagina'] == 'editar'||
 						$_GET['pagina'] == 'salir')
 					 {
 						include "paginas/".$_GET['pagina'].".php";

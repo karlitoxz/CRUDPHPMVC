@@ -29,6 +29,15 @@
 			}
 	//Listar registros
 
+	//Listar registro
+			public function ctrSRegistro($item,$valor){
+
+				$tabla = 'registros';
+				$respuesta = formulariosModelo::mdlSRegistro($tabla,$item,$valor);
+				return $respuesta;
+			}
+	//Listar registro
+
 	//Login
 		public function ctrIngreso(){
 			if (isset($_POST['ingEmail'])) {
@@ -50,6 +59,34 @@
 			}
 		}			
 	//Login
+
+		//actualizar registro
+		public function crtActRegistro(){
+			if (isset($_POST['actNombre'])) {
+				if ($_POST['actPassword'] != '') {
+					$password = $_POST['actPassword'];
+				} else {
+					$password = $_POST['passActual'];
+				}
+				$tabla = 'registros';
+				$datos = array("id"=>$_POST['idUsuario'],
+								"nombre"=>$_POST['actNombre'],
+								"email"=>$_POST['actEmail'],
+								"password"=>$password);
+				$respuesta = formulariosModelo::mdlActualizarRegistro($tabla,$datos);
+					if ($respuesta = 'ok') {
+echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
+echo '<div class="alert alert-success">El usuario a sido actualizado</div>';
+echo '<script>setTimeout(function(){window.location = "index.php?pagina=inicio"},3000);</script>';
+					}
+			} else {
+				# code...
+			}
+			
+		}
+		//actualizar registro
+
+
 	}
 
 ?>
