@@ -87,6 +87,27 @@ echo '<script>setTimeout(function(){window.location = "index.php?pagina=inicio"}
 		//actualizar registro
 
 
+//Eliminar registro
+	public function crtEliminarRegistro(){
+		if (isset($_POST['eliminarId'])) {
+			$tabla = 'registros';
+			$valor = $_POST['eliminarId'];
+			$respuesta = formulariosModelo::mdlEliminarRegistro($tabla,$valor);
+								if ($respuesta = 'ok') {
+echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
+echo '<div class="alert alert-danger">El usuario a sido Borrado</div>';
+echo '<script>setTimeout(function(){window.location = "index.php?pagina=inicio"},500);</script>';
+					}
+		} else {
+			# code...
+		}
+		
+
+	}
+
+//Eliminar registro
+
+
 	}
 
 ?>

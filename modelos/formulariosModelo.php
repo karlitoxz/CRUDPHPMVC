@@ -40,9 +40,9 @@ class formulariosModelo{
 	//Listar registro____________________
 	static public function mdlSRegistro($tabla,$item,$valor){
 
-		$stmt = Conexion::conectar()->prepare("SELECT *,DATE_FORMAT(fecha,'%d/%m/%Y') as fecha FROM $tabla where $item = :$item");
+		$stmt = Conexion::conectar()->prepare("SELECT *,DATE_FORMAT(fecha,'%d/%m/%Y') as fecha FROM $tabla where $item = :valor");
 
-		$stmt -> bindParam(":".$item, $valor,PDO::PARAM_STR);
+		$stmt -> bindParam(":valor", $valor,PDO::PARAM_STR);
 
 		if ($stmt->execute()) {
 			return $stmt->fetch();
@@ -92,6 +92,24 @@ class formulariosModelo{
 
 	//actualizar registro___________________
 
+	//Eliminar registro___________________
+
+	
+		static public function mdlEliminarRegistro($tabla,$valor){
+
+		$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE id = :valor");
+
+		$stmt -> bindParam(":valor", $valor,PDO::PARAM_INT);
+
+		if ($stmt->execute()) {
+			return 'ok';
+		}else{
+			print_r(Conexion::conectar()->errorInfo());
+		}
+		$stmt = null;
+	}
+
+	//Eliminar registro___________________
 
 
 
