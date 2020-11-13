@@ -33,7 +33,7 @@
 				<td><?php echo $value['fecha']; ?></td>
 				<td>
 					<div class="btn btn-group">
-						<button class="btn btn-warning"><i class="fas fa-pencil-alt"></i></button>
+						<a href="index.php?pagina=editar&id=<?php echo $value['id']; ?>" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></a>
 						<button class="btn btn-danger"><i class="fas fa-trash"></i></button>
 					</div>
 				</td>
