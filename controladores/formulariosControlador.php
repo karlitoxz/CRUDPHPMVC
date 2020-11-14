@@ -13,10 +13,12 @@
 					$tabla = 'registros';
 					$token = md5($_POST['regNombre']."+".$_POST['regEmail']);
 
+				$password = crypt($_POST['regPassword'], '$2a$07$usesomesillystringforsalt$');
+
 					$datos = array("token"=>$token,
 								"nombre"=>$_POST['regNombre'],
 								"email"=>$_POST['regEmail'],
-								"password"=>$_POST['regPassword']);
+								"password"=>$password);
 
 						$respuesta = formulariosModelo::mdlRegistro($tabla,$datos);
 					return $respuesta;
@@ -59,7 +61,8 @@
 				$valor = $_POST['ingEmail'];
 				$respuesta = formulariosModelo::mdlLogin($tabla,$item,$valor);
 				//print_r($respuesta);
-				if ($respuesta['email'] == $_POST['ingEmail'] && $respuesta['password'] == $_POST['ingPassword']) {
+				$password = crypt($_POST['ingPassword'], '$2a$07$usesomesillystringforsalt$');
+				if ($respuesta['email'] == $_POST['ingEmail'] && $respuesta['password'] == $password) {
 					//echo '<div class="alert alert-success">ingreso exitoso</div>';
 					formulariosModelo::mdlActualizarIntentos($tabla,0,$respuesta['token']);
 					$_SESSION["validarIngreso"] = 'ok';
@@ -96,7 +99,7 @@
 
 				if ($valToken == $_POST['tokenUsuario']) {
 					if ($_POST['actPassword'] != '') {
-						$password = $_POST['actPassword'];
+				$password = crypt($_POST['actPassword'], '$2a$07$usesomesillystringforsalt$');
 					} else {
 						$password = $_POST['passActual'];
 					}

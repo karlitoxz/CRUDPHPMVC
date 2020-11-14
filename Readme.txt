@@ -24,6 +24,7 @@ Readme
 		https://www.youtube.com/watch?v=8HGvj2w88vE&ab_channel=TutorialesatuAlcance
 		https://www.youtube.com/watch?v=X6myYinstqA&ab_channel=TutorialesatuAlcance
 		https://www.youtube.com/watch?v=-KafvnlaU08&ab_channel=TutorialesatuAlcance
+		https://www.youtube.com/watch?v=SievkPbDz30&ab_channel=TutorialesatuAlcance
 		0:16
 
 		Seguridad Informatica XSS:
@@ -38,6 +39,12 @@ Readme
 		1.preg_match
 		2.PDO::PARAM_STR
 		3..htaccess
+
+		Encrytar contraseña:
+		if (CRYPT_BLOWFISH == 1) {
+			    echo 'Blowfish:     ' . crypt('rasmuslerdorf', '$2a$07$usesomesillystringforsalt$') . "\n";
+			}
+
 
 
 
