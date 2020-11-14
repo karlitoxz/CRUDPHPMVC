@@ -7,8 +7,9 @@ class formulariosModelo{
 	//Registro________________
 
 	static public function mdlRegistro($tabla,$datos){
-		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla (nombre, email, password) VALUES (:nombre, :email, :password)");
+		$stmt = Conexion::conectar()->prepare("INSERT INTO $tabla (token, nombre, email, password) VALUES (:token, :nombre, :email, :password)");
 
+		$stmt -> bindParam(":token",$datos["token"],PDO::PARAM_STR);
 		$stmt -> bindParam(":nombre",$datos["nombre"],PDO::PARAM_STR);
 		$stmt -> bindParam(":email",$datos["email"],PDO::PARAM_STR);
 		$stmt -> bindParam(":password",$datos["password"],PDO::PARAM_STR);
@@ -73,12 +74,14 @@ class formulariosModelo{
 	//actualizar registro___________________
 		
 		static public function mdlActualizarRegistro($tabla,$datos){
-		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET nombre = :nombre, email = :email, password = :password WHERE id = :id");
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET token = :newToken, nombre = :nombre, email = :email, password = :password WHERE token = :token");
 
+		$stmt -> bindParam(":newToken",$datos["newToken"],PDO::PARAM_STR);
+		$stmt -> bindParam(":token",$datos["token"],PDO::PARAM_STR);
 		$stmt -> bindParam(":nombre",$datos["nombre"],PDO::PARAM_STR);
 		$stmt -> bindParam(":email",$datos["email"],PDO::PARAM_STR);
 		$stmt -> bindParam(":password",$datos["password"],PDO::PARAM_STR);
-		$stmt -> bindParam(":id",$datos["id"],PDO::PARAM_INT);
+		
 
 
 		if ($stmt->execute()) {
@@ -97,7 +100,7 @@ class formulariosModelo{
 	
 		static public function mdlEliminarRegistro($tabla,$valor){
 
-		$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE id = :valor");
+		$stmt = Conexion::conectar()->prepare("DELETE FROM $tabla WHERE token = :valor");
 
 		$stmt -> bindParam(":valor", $valor,PDO::PARAM_INT);
 

@@ -1,7 +1,7 @@
 <?php 
-	if (isset($_GET['id'])) {
-		$item = "id";
-		$valor = $_GET['id'];
+	if (isset($_GET['token'])) {
+		$item = "token";
+		$valor = $_GET['token'];
 		$usuario = ControladorFormularios::ctrSRegistro($item,$valor);
 		//print_r($usuario);
 	} else {
@@ -38,7 +38,7 @@ Editar
 				<span class="input-group-text"><i class="fas fa-lock"></i></span>
 			</div>
 			<input type="password" class="form-control" placeholder="Enter password" id="pwd" name="actPassword">
-			<input type="hidden" name="idUsuario" value="<?php echo $usuario['id']?>">
+			<input type="hidden" name="tokenUsuario" value="<?php echo $usuario['token']?>">
 			<input type="hidden" name="passActual" value="<?php echo $usuario['password']?>">
 		</div>
 	</div>

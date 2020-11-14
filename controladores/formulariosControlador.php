@@ -11,9 +11,13 @@
 				if (preg_match(self::FILTERNAME, $_POST['regNombre']) &&
 					preg_match(self::FILTEREMAIL, $_POST['regEmail'])){
 					$tabla = 'registros';
-					$datos = array("nombre"=>$_POST['regNombre'],
+					$token = md5($_POST['regNombre']."+".$_POST['regEmail']);
+
+					$datos = array("token"=>$token,
+								"nombre"=>$_POST['regNombre'],
 								"email"=>$_POST['regEmail'],
 								"password"=>$_POST['regPassword']);
+
 						$respuesta = formulariosModelo::mdlRegistro($tabla,$datos);
 					return $respuesta;
 				} else {
@@ -69,37 +73,62 @@
 		}			
 	//Login
 
-		//actualizar registro
+//Actualizar registro
 		public function crtActRegistro(){
 			if (isset($_POST['actNombre'])) {
-				if ($_POST['actPassword'] != '') {
-					$password = $_POST['actPassword'];
-				} else {
-					$password = $_POST['passActual'];
-				}
-				$tabla = 'registros';
-				$datos = array("id"=>$_POST['idUsuario'],
-								"nombre"=>$_POST['actNombre'],
-								"email"=>$_POST['actEmail'],
-								"password"=>$password);
-				$respuesta = formulariosModelo::mdlActualizarRegistro($tabla,$datos);
-					if ($respuesta = 'ok') {
-echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
-echo '<div class="alert alert-success">El usuario a sido actualizado</div>';
-echo '<script>setTimeout(function(){window.location = "index.php?pagina=inicio"},3000);</script>';
+				if (preg_match(self::FILTERNAME, $_POST['actNombre']) &&
+					preg_match(self::FILTEREMAIL, $_POST['actEmail'])){
+					$usuario = formulariosModelo::mdlSRegistro("registros","token",$_POST['tokenUsuario']);
+
+				$valToken = md5($usuario['nombre']."+".$usuario['email']);
+
+				if ($valToken == $_POST['tokenUsuario']) {
+					if ($_POST['actPassword'] != '') {
+						$password = $_POST['actPassword'];
+					} else {
+						$password = $_POST['passActual'];
 					}
-			} else {
-				# code...
+					$tabla = 'registros';
+
+					$newToken = md5($_POST['actNombre']."+".$_POST['actEmail']);
+
+					$datos = array("newToken"=>$newToken,
+						"token"=>$_POST['tokenUsuario'],
+						"nombre"=>$_POST['actNombre'],
+						"email"=>$_POST['actEmail'],
+						"password"=>$password);
+					$respuesta = formulariosModelo::mdlActualizarRegistro($tabla,$datos);
+					if ($respuesta = 'ok') {
+						echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
+						echo '<div class="alert alert-success">El usuario a sido actualizado</div>';
+						echo '<script>setTimeout(function(){window.location = "index.php?pagina=inicio"},3000);</script>';
+					}
+				} else {
+					echo '<div class="alert alert-danger">El token no es valido</div>';
+				}
+
+			}else{
+				echo '<div class="alert alert-warning">Caracteres invalidos</div>';
 			}
-			
+		} else {
+			//echo '<div class="alert alert-danger">No existe la variable</div>';
 		}
-		//actualizar registro
+
+	}
+//Actualizar registro
 
 
 //Eliminar registro
 	public function crtEliminarRegistro(){
+
 		if (isset($_POST['eliminarId'])) {
-			$tabla = 'registros';
+
+			$usuario = formulariosModelo::mdlSRegistro("registros","token",$_POST['eliminarId']);
+
+			$valToken = md5($usuario['nombre']."+".$usuario['email']);
+
+			if ($valToken == $_POST['eliminarId']) {
+				$tabla = 'registros';
 			$valor = $_POST['eliminarId'];
 			$respuesta = formulariosModelo::mdlEliminarRegistro($tabla,$valor);
 								if ($respuesta = 'ok') {
@@ -107,8 +136,12 @@ echo '<script>if (window.history.replaceState){window.history.replaceState(null,
 echo '<div class="alert alert-danger">El usuario a sido Borrado</div>';
 echo '<script>setTimeout(function(){window.location = "index.php?pagina=inicio"},500);</script>';
 					}
+			} else {
+				echo '<div class="alert alert-danger">El token no es valido</div>';
+			}
+			
 		} else {
-			# code...
+			//echo '<div class="alert alert-danger">No existe la variable</div>';
 		}
 		
 

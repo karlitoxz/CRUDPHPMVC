@@ -34,12 +34,12 @@
 				<td>
 					<div class="btn btn-group">
 						<div class="px-1">
-							<a href="index.php?pagina=editar&id=<?php echo $value['id']; ?>" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></a>
+							<a href="index.php?pagina=editar&token=<?php echo $value['token']; ?>" class="btn btn-warning"><i class="fas fa-pencil-alt"></i></a>
 						</div>						
 
 						<div class="px-1">				
 							<form method="post">
-								<input type="hidden" value="<?php echo $value['id']; ?>" name="eliminarId" id="eliminarId">
+								<input type="hidden" value="<?php echo $value['token']; ?>" name="eliminarId" id="eliminarId">
 								<button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i></button>
 							</form>
 							<?php 
