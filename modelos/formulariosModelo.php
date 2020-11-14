@@ -114,6 +114,24 @@ class formulariosModelo{
 
 	//Eliminar registro___________________
 
+	//actualizar intentos Fallidos___________________
+		
+		static public function mdlActualizarIntentos($tabla,$valor,$token){
+		$stmt = Conexion::conectar()->prepare("UPDATE $tabla SET intentos_fallidos = :intentos_fallidos WHERE token = :token");
+
+		$stmt -> bindParam(":intentos_fallidos",$valor,PDO::PARAM_INT);
+		$stmt -> bindParam(":token",$token,PDO::PARAM_STR);
+
+		if ($stmt->execute()) {
+			return "ok";
+		}else{
+			print_r(Conexion::conectar()->errorInfo());
+		}
+
+		$stmt = null;
+	}
+
+	//actualizar intentos Fallidos___________________
 
 
 

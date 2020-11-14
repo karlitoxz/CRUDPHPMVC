@@ -61,9 +61,21 @@
 				//print_r($respuesta);
 				if ($respuesta['email'] == $_POST['ingEmail'] && $respuesta['password'] == $_POST['ingPassword']) {
 					//echo '<div class="alert alert-success">ingreso exitoso</div>';
+					formulariosModelo::mdlActualizarIntentos($tabla,0,$respuesta['token']);
 					$_SESSION["validarIngreso"] = 'ok';
 					echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}; window.location = "index.php?pagina=inicio";</script>';
 				} else {
+
+					//Intentos de login fallidos:
+					if ($respuesta['intentos_fallidos'] < 3) {
+						$intentos_fallidos = $respuesta['intentos_fallidos'] + 1;
+					$respuesta = formulariosModelo::mdlActualizarIntentos($tabla,$intentos_fallidos,$respuesta['token']);
+					}else{
+						echo '<div class="alert alert-warning">ReCatcha</div>';
+					}
+					
+
+					//Intentos de login fallidos:
 					echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
 					echo '<div class="alert alert-warning">Ingreso no exitoso</div>';
 				}
