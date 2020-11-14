@@ -26,4 +26,6 @@ Readme
 		EXPRESIONES REGULARES PHP:https://diego.com.es/expresiones-regulares-en-php
 		en el archivo index.php no cerrar la etiqueta de php '?>'
 
+		Seguridad Informatica CSRF: token
+
 
