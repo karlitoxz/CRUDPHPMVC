@@ -14,6 +14,10 @@ Readme
 		$registro = ControladorFormularios::ctrRegistro();
 		echo $registro;
 
+		Utilizar constantes dentro de una clase:
+			const FILTERNAME = '/^[ a-zA-ZáéíóúÁÉÍÓÚ]+$/';
+			preg_match(self::FILTERNAME, $_POST['regNombre']
+
 		Subir a github: git push origin master
 
 		https://www.youtube.com/watch?v=WdTx3DRSWYU&ab_channel=TutorialesatuAlcance
@@ -28,5 +32,12 @@ Readme
 		en el archivo index.php no cerrar la etiqueta de php '?>'
 
 		Seguridad Informatica CSRF: token
+		md5(string);
+
+		Seguridad Informatica CSRF: SQL Injection:
+		1.preg_match
+		2.PDO::PARAM_STR
+		3..htaccess
+
 
 
