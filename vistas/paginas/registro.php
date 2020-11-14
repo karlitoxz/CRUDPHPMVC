@@ -32,10 +32,22 @@ Registro
 	</div>
 	<?php 
 		$registro = ControladorFormularios::ctrRegistro();
-		if ($registro == 'ok') {
-			echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
-			echo '<div class="alert alert-success">El usuario a sido registrado</div>';
+
+		switch ($registro) {
+			case 'ok':
+				echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
+				echo '<div class="alert alert-success">El usuario a sido registrado</div>';
+				break;
+			case 'Error02':
+				echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
+				echo '<div class="alert alert-danger">No existe la variables</div>';
+				break;
+			case 'Error01':
+				echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
+				echo '<div class="alert alert-danger">existen caracteres no permitidos</div>';
+				break;
 		}
+
 	 ?>
 	<button type="submit" class="btn btn-primary">Enviar</button>
 </form>

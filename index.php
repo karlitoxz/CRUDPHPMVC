@@ -9,4 +9,3 @@
 		$plantilla -> ctrTraerPlantilla();
 
 
-?>

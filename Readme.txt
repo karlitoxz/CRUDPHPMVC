@@ -18,5 +18,12 @@ Readme
 
 		https://www.youtube.com/watch?v=WdTx3DRSWYU&ab_channel=TutorialesatuAlcance
 		https://www.youtube.com/watch?v=8HGvj2w88vE&ab_channel=TutorialesatuAlcance
-		23:49
+		https://www.youtube.com/watch?v=X6myYinstqA&ab_channel=TutorialesatuAlcance
+		0:16
+
+		Seguridad Informatica XSS:
+		preg_match(pattern, subject)
+		EXPRESIONES REGULARES PHP:https://diego.com.es/expresiones-regulares-en-php
+		en el archivo index.php no cerrar la etiqueta de php '?>'
+
 
