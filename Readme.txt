@@ -45,6 +45,16 @@ Readme
 			    echo 'Blowfish:     ' . crypt('rasmuslerdorf', '$2a$07$usesomesillystringforsalt$') . "\n";
 			}
 
+	URL's amigables .htaccess:
+		RewriteEngine On
+		RewriteRule ^([-a-zA-Z0-9/]+)$ index.php?pagina=$1
+		
+			Menu cambiar:
+				index.php?pagina=salir
+				por:
+				salir
+				"Con rutas de mas de dos parametros no funciona."
+
 
 
 

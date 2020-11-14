@@ -66,7 +66,7 @@
 					//echo '<div class="alert alert-success">ingreso exitoso</div>';
 					formulariosModelo::mdlActualizarIntentos($tabla,0,$respuesta['token']);
 					$_SESSION["validarIngreso"] = 'ok';
-					echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}; window.location = "index.php?pagina=inicio";</script>';
+					echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}; window.location = "inicio";</script>';
 				} else {
 
 					//Intentos de login fallidos:
@@ -116,7 +116,7 @@
 					if ($respuesta = 'ok') {
 						echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
 						echo '<div class="alert alert-success">El usuario a sido actualizado</div>';
-						echo '<script>setTimeout(function(){window.location = "index.php?pagina=inicio"},3000);</script>';
+						echo '<script>setTimeout(function(){window.location = "inicio"},3000);</script>';
 					}
 				} else {
 					echo '<div class="alert alert-danger">El token no es valido</div>';
@@ -149,7 +149,7 @@
 								if ($respuesta = 'ok') {
 echo '<script>if (window.history.replaceState){window.history.replaceState(null, null, window.location.href)}</script>';
 echo '<div class="alert alert-danger">El usuario a sido Borrado</div>';
-echo '<script>setTimeout(function(){window.location = "index.php?pagina=inicio"},500);</script>';
+echo '<script>setTimeout(function(){window.location = "inicio"},500);</script>';
 					}
 			} else {
 				echo '<div class="alert alert-danger">El token no es valido</div>';

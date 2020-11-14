@@ -3,11 +3,11 @@
 	//print_r($usuarios)
 	if (isset($_SESSION["validarIngreso"])) {
 		if ($_SESSION["validarIngreso"] != 'ok') {
-			echo "<script>window.location = 'index.php?pagina=ingreso'</script>";
+			echo "<script>window.location = 'ingreso'</script>";
 			return;
 		}
 	}else{
-			echo '<script>window.location = "index.php?pagina=ingreso";</script>';
+			echo '<script>window.location = "ingreso";</script>';
 			return;
 	}
 	
