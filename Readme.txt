@@ -4,6 +4,7 @@ Readme
 	Kit font awesome:
 		<script src="https://kit.fontawesome.com/86f7407bc6.js" crossorigin="anonymous"></script>
 
+	CLASES PHP Generalidades:
 		forma en que se instancia la clase de metodo NO estatico:
 		No se puede reutilizar en la vista. (echo)
 		$registro = new ControladorFormularios();
@@ -21,6 +22,36 @@ Readme
 		Utilizar variables dentro de una clase:
 				private $table = 'chatdialogos';
 				$stmt = Conexion::conectar()->prepare("SELECT * FROM $this->table");
+
+		Pedir datos desde Ajax a un controlador:
+			<?php  
+					include '../modelos/registrosModelo.php';
+					class controladorregistros{
+
+						//Listar registros
+							static public function ctrSRegistros(){
+									$respuesta = registrosModelo::mdlListarRegistros();
+									return $respuesta;
+								}
+						//Listar registros
+						
+					}
+
+					//AutoLoad Ajax
+					if(isset($_POST['ctrSRegistros'])){
+					      $respuesta =  controladorregistros::ctrSRegistros();
+					      echo $respuesta;
+					}
+			?>
+				 $.ajax({
+						type: 'POST', 	
+						url: "controladores/registrosControlador.php",
+						data: {"traerRegistros": "traerRegistros"},
+						})
+					  .done(function( data ) {
+					  	data = jQuery.parseJSON(data);
+					  	console.log(data[0].dialogo);
+				  });
 
 		Subir a github: git push origin master
 
