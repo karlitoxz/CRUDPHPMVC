@@ -90,6 +90,31 @@ Readme
 				salir
 				"Con rutas de mas de dos parametros no funciona."
 
+	Decodificar JSON en PHP:
+		01:JSON:
+			$string = '{"nombre": "Angelina", "apellido": "Jolie"}';
+			$resultado = json_decode($string);
+			// Vemos el resultado de la decodificación:
+			var_dump($resultado);
+			/*
+			* object(stdClass)[3]
+			  public 'nombre' => string 'Angelina' (length=8)
+			  public 'apellido' => string 'Jolie' (length=5)
+			*/
+			echo $resultado->nombre; // Angelina
+			echo $resultado->apellido; // Jolie
+		02:ARRAY ASOCIATIVO:
+			$string = '{"nombre": "Angelina", "apellido": "Jolie"}';
+			$resultado = json_decode($string, true);
+			// Vemos el resultado de la decodificación:
+			var_dump($resultado);
+			/*
+			* array (size=2)
+			  'nombre' => string 'Angelina' (length=8)
+			  'apellido' => string 'Jolie' (length=5)
+			*/
+			echo $resultado['nombre']; // Angelina
+			echo $resultado['apellido']; // Jolie
 
 
 
