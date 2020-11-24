@@ -18,6 +18,10 @@ Readme
 			const FILTERNAME = '/^[ a-zA-ZáéíóúÁÉÍÓÚ]+$/';
 			preg_match(self::FILTERNAME, $_POST['regNombre']
 
+		Utilizar variables dentro de una clase:
+				private $table = 'chatdialogos';
+				$stmt = Conexion::conectar()->prepare("SELECT * FROM $this->table");
+
 		Subir a github: git push origin master
 
 		https://www.youtube.com/watch?v=WdTx3DRSWYU&ab_channel=TutorialesatuAlcance
