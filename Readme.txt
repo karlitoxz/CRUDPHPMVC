@@ -134,6 +134,8 @@ Readme
 			    data.success;
 			    data.message;
 			 })
+	Lllamar una funcion Java Script desde el action de un formulario:
+		<form name="P02" action="javascript: myFuncion();">
 
 
 
