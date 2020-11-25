@@ -115,6 +115,25 @@ Readme
 			*/
 			echo $resultado['nombre']; // Angelina
 			echo $resultado['apellido']; // Jolie
+		Decodificar JSON desde PHP a Ajax
+			<?php
+				$respuesta =  controladorRegistrso::ctrSRegistrosArray($idRegistro);
+				echo json_encode($respuesta);
+			?>
+			$.ajax({
+			    // En data puedes utilizar un objeto JSON, un array o un query string
+			    data: {"parametro1" : "valor1", "parametro2" : "valor2"},
+			    //Cambiar a type: POST si necesario
+			    type: "GET",
+			    // Formato de datos que se espera en la respuesta*****
+			    dataType: "json",
+			    // URL a la que se enviará la solicitud Ajax
+			    url: "script.php",
+			})
+			 .done(function( data, textStatus, jqXHR ) {
+			    data.success;
+			    data.message;
+			 })
 
 
 
