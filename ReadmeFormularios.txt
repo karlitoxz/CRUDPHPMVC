@@ -64,12 +64,13 @@
 				}
 --------------------------------------------------------------------------------------------------------------------------				
 	jquery asociar eventos a elementos html creados dinamicamente:
-		example:
-			$(document).ready(function() {
-				//Ready---------------------------------
-					$("#elementoPadre").on("change", "#elementoDinamico", function(){
-						alert('Hola');
-					});
-				//Ready---------------------------------
-			});
+		https://www.arumeinformatica.es/blog/jquery-asociar-eventos-a-elementos-html-creados-dinamicamente/
+			example:
+				$(document).ready(function() {
+					//Ready---------------------------------
+						$("#elementoPadre").on("change", "#elementoDinamico", function(){
+							alert('Hola');
+						});
+					//Ready---------------------------------
+				});
 --------------------------------------------------------------------------------------------------------------------------
