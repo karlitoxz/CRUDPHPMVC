@@ -81,6 +81,10 @@ En la cabecera del formulario:
 
 <form name="formP02" action="javascript: myFunction();">
 
+OR
+
+<form class="p-5 bg-light" name="formulario" id="formulario" method="post" action="" onsubmit="return myFunction()">
+
 
 añadir el tipo: button
 	<button name="recoverSubmit" type="button" id="recoverSubmit" class="btn btn-lg btn-primary btn-block azulServ">Restablecer la contrase&ntilde;a</button>
