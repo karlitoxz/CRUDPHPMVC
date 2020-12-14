@@ -88,3 +88,11 @@ añadir el tipo: button
 	OR
 
 	<button type="button" id="btnP02" onclick="myFunction()" class="btn btn-primary float-right">Enviar</button>
+-----------------------------------------------------------------------------------------------------------------------------
+Validar formularios desde Jquery con Regex - Expresiones regulares
+
+if (claveSeguridad.match(/(SERV-[0-9]{4,4})$/)) {
+
+}
+
+-----------------------------------------------------------------------------------------------------------------------------
