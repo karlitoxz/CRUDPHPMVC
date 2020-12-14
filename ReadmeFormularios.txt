@@ -99,4 +99,13 @@ if (claveSeguridad.match(/(SERV-[0-9]{4,4})$/)) {
 
 }
 
+contraseña de 8 caracteres minimo una minuscula y un numero 
+if (password.match("^(?=.*[0-9])(?=.*[a-z])([a-zA-Z0-9]{8,})$")) {
+}
+
+contraseña de 8 caracteres minimo una minuscula una Mayuscula y un numero 
+if (password.match("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9]{8,})$")) {
+}
+
+
 -----------------------------------------------------------------------------------------------------------------------------
