@@ -74,3 +74,17 @@
 					//Ready---------------------------------
 				});
 --------------------------------------------------------------------------------------------------------------------------
+
+Prevenir el envio de un formulario:
+
+En la cabecera del formulario:
+
+<form name="formP02" action="javascript: myFunction();">
+
+
+añadir el tipo: button
+	<button name="recoverSubmit" type="button" id="recoverSubmit" class="btn btn-lg btn-primary btn-block azulServ">Restablecer la contrase&ntilde;a</button>
+
+	OR
+
+	<button type="button" id="btnP02" onclick="myFunction()" class="btn btn-primary float-right">Enviar</button>
