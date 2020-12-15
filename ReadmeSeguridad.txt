@@ -40,3 +40,19 @@ Para añadir seguridad en modelos PHP, usar PDO:
 		echo $resp;
 }		
 	?>
+
+	----------------------------------------------------------------------------------------------------
+	Algoritmos soportados por PHP:
+		https://www.php.net/manual/es/function.hash-algos.php
+
+		Ejemplo para guardar un archivo (algoritmo crc32):
+
+			$cantFiles = 5;
+
+			for ($i=0; $i < $cantFiles  ; $i++) {
+				$newName = explode(".",$_FILES['files']["name"][$i]);
+				//El nombre del archivo sera el indice [0] y la extencion [1]
+				$file_names[$i] = crc32($newName[0]).".".$newName[1];
+				$tmpFilePath[$i] = $_FILES['files']['tmp_name'][$i];
+				move_uploaded_file($tmpFilePath[$i], $ubicacionArchivo.$file_names[$i]);
+			}
