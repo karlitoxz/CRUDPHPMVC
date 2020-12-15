@@ -62,6 +62,14 @@
 					   
 					}
 				}
+
+		Contar la cantidad de archivos que vienen:
+		
+			if (isset($_FILES)) {
+				print_r(count($_FILES['filesP08']["name"]));
+				//var_dump($_FILES);
+			}
+
 --------------------------------------------------------------------------------------------------------------------------				
 	jquery asociar eventos a elementos html creados dinamicamente:
 		https://www.arumeinformatica.es/blog/jquery-asociar-eventos-a-elementos-html-creados-dinamicamente/
