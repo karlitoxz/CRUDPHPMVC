@@ -117,3 +117,20 @@ if (password.match("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9]{8,})$")) {
 
 
 -----------------------------------------------------------------------------------------------------------------------------
+Avandonar una funcion antes de tiempo:
+
+	function contar(){
+		var exit = false;
+
+			for (i = 0; i < 10; i++) {
+	 			if(i == 5){
+	 				exit = true;
+	 			}
+			}	
+
+		if (exit == true) {
+		 return false;
+		}
+			
+		console.log('Este texto no se mostrara');
+	}
