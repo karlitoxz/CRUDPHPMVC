@@ -70,17 +70,7 @@
 				//var_dump($_FILES);
 			}
 
---------------------------------------------------------------------------------------------------------------------------				
-	jquery asociar eventos a elementos html creados dinamicamente:
-		https://www.arumeinformatica.es/blog/jquery-asociar-eventos-a-elementos-html-creados-dinamicamente/
-			example:
-				$(document).ready(function() {
-					//Ready---------------------------------
-						$("#elementoPadre").on("change", "#elementoDinamico", function(){
-							alert('Hola');
-						});
-					//Ready---------------------------------
-				});
+
 --------------------------------------------------------------------------------------------------------------------------
 
 Prevenir el envio de un formulario:
@@ -100,37 +90,152 @@ añadir el tipo: button
 	OR
 
 	<button type="button" id="btnP02" onclick="myFunction()" class="btn btn-primary float-right">Enviar</button>
------------------------------------------------------------------------------------------------------------------------------
-Validar formularios desde Jquery con Regex - Expresiones regulares
 
-if (claveSeguridad.match(/(SERV-[0-9]{4,4})$/)) {
+--------------------------------------------------------------------------------------------------------------------------
+Crear y enviar formulario con campos, archivos y campos personalizados por AJAX.
 
-}
+JS:
 
-contraseña de 8 caracteres minimo una minuscula y un numero 
-if (password.match("^(?=.*[0-9])(?=.*[a-z])([a-zA-Z0-9]{8,})$")) {
-}
+	function enviarFormulario(){
+		
+	//Enviar formulario al controlador
+		var Data = new FormData();
+		//Form data
+			var form_data = $('#formulario').serializeArray();
+			$.each(form_data, function (key, input) {
+				Data.append(input.name, input.value);
+			});
+		//File data
+			var file_data = $('#files')[0].files;
+			for (var i = 0; i < file_data.length; i++) {
+			    Data.append("files[]", file_data[i]);
+			}
+		//Custom data
+				Data.append('formulario', 'formularioJuan');
+		 $.ajax({
+			type: 'POST', 	
+			url: "controladores/formulariosControlador.php",
+			data: Data,
+			dataType: 'json',
+			processData: false,
+	    	contentType: false,
+			})
+		  .done(function( result ) {
+		  	console.log("datos enviados: ", Data);
+		  	console.log("datos recibidos: ", result);
+		  	if (result.respuesta == 'error'){
+		  		alert(result.mensaje);
+		  	}else{
+		  		setTimeout(function(){ alert(result.mensaje); }, 200);
+		  	}
 
-contraseña de 8 caracteres minimo una minuscula una Mayuscula y un numero 
-if (password.match("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9]{8,})$")) {
-}
-
-
------------------------------------------------------------------------------------------------------------------------------
-Avandonar una funcion antes de tiempo:
-
-	function contar(){
-		var exit = false;
-
-			for (i = 0; i < 10; i++) {
-	 			if(i == 5){
-	 				exit = true;
-	 			}
-			}	
-
-		if (exit == true) {
-		 return false;
-		}
-			
-		console.log('Este texto no se mostrara');
+	  	});
+	//Enviar formulario al controlador
 	}
+
+PHP Controlador:
+
+
+	static public function ctrFormulario(){
+
+		$comentarios = filter_input(INPUT_POST, 'comentarios', FILTER_SANITIZE_STRING);
+
+	//Validacion de archivos:
+			$tiposAdminitidos = array('image/jpeg', 'application/pdf');
+			$archivosValidaciones = $_FILES['files']['type'];
+			$resultado = count(array_diff($archivosValidaciones, $tiposAdminitidos));
+	//Validacion de archivos:
+		if ($resultado > 0) {
+			$respuesta = array("respuesta"=>"error", "mensaje"=>"Recuerde solo se admiten archivos JPG y PDF");
+			return $respuesta;
+			} else {
+		//Subir y guardar archivos validados
+			$micarpeta = date('FY');
+			
+			if (!file_exists('../vistas/dist/uploads/'.$micarpeta)) {
+			    mkdir('../vistas/dist/uploads/'.$micarpeta, 0777);
+			}
+			$ubicacionArchivo = ('../vistas/dist/uploads/'.date('FY').'/');
+
+			$cantFiles = count($_FILES['files']["name"]);
+
+			$file_names = array();
+
+			for ($i=0; $i < $cantFiles  ; $i++) {
+				$newName = explode(".",$_FILES['files']["name"][$i]);
+				$tmpFilePath[$i] = $_FILES['files']['tmp_name'][$i];
+				$file_names[$i] = hash_file('md5',$tmpFilePath[$i]).".".strtolower(end($newName));
+				move_uploaded_file($tmpFilePath[$i], $ubicacionArchivo.$file_names[$i]);
+			}
+
+			$datos = array ("comentarios" => $comentarios,
+							"cantFiles" => $cantFiles,
+							"ubicacionArchivo" => $ubicacionArchivo);
+			array_push($datos, array($file_names));
+
+			$respuesta = guardarMysqlModelo::mdlGuardarenBD($datos);
+
+			return $respuesta;	
+		//Subir y guardar archivos validados
+		}
+
+	}
+
+	//AutoLoad Ajax---
+		if(isset($_POST['formulario']) && $_POST['formulario'] == 'formularioJuan'){
+			$resp =  controladorFormularios::ctrFormulario();
+		echo json_encode($resp);
+		}
+
+
+	PHP Modelo:
+
+	static public function mdlGuardarenBD($datos){
+		$stmt = ConexionMysql::conectarMysql()->prepare("INSERT INTO tabla (nombreArchivo, ubicacionArchivo, comentarios) VALUES (::nombreArchivo, :ubicacionArchivo, :comentarios)");
+
+		$cantFiles = $datos["cantFiles"];
+		$result = array();
+
+		for ($i=0; $i < $cantFiles ; $i++) { 
+			
+			$nombreArchivo = $datos[0][0][$i];
+			$stmt -> bindParam(":nombreArchivo",$nombreArchivo,PDO::PARAM_STR);
+			$stmt -> bindParam(":ubicacionArchivo",$datos["ubicacionArchivo"],PDO::PARAM_STR);
+			$stmt -> bindParam(":comentarios",$datos["comentarios"],PDO::PARAM_STR);
+			
+				if ($stmt->execute()) {
+					$result = array("respuesta"=> "ok") ;
+				}else{
+					print_r(ConexionMysql::conectarMysql()->errorInfo());
+				}
+		}
+		return $result;	
+		$stmt = null;
+	}
+
+PHP conexion:
+
+		Class ConexionMysql{
+
+			static public function conectarMysql(){
+
+				//parametros PDO ("nameserver;basededatos","usuario","contraseña")
+				$link = new PDO("mysql:host=localhost;dbname=dbtest","root","");
+				$link ->exec("set names utf8");
+				$link->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+				return $link;
+			}
+
+		}
+
+			/*$stmt = ConexionMysql::conectarMysql()->prepare("SELECT * FROM tabla");
+			if ($stmt->execute()) {
+				var_dump($stmt->fetchAll()) ;
+			}else{
+				print_r(ConexionMysql::conectarMysql()->errorInfo());
+			}*/
+
+
+--------------------------------------------------------------------------------------------------------------------------
+
+
