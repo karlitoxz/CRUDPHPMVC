@@ -102,9 +102,15 @@ JS:
 		var Data = new FormData();
 		//Form data
 			var form_data = $('#formulario').serializeArray();
+
+			for (var value of form_data.values()) {
+				console.log(value.value);
+			}
+
 			$.each(form_data, function (key, input) {
 				Data.append(input.name, input.value);
 			});
+
 		//File data
 			var file_data = $('#files')[0].files;
 			for (var i = 0; i < file_data.length; i++) {
