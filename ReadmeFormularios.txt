@@ -119,9 +119,11 @@ JS:
 			dataType: 'json',
 			processData: false,
 	    	contentType: false,
+	    	beforeSend: function() {$('#loading').show();},
 			})
 		  .done(function( result ) {
-		  	console.log("datos enviados: ", Data);
+		 	$('#loading').hide();
+	 	 	console.log("datos enviados: ", Data);
 		  	console.log("datos recibidos: ", result);
 		  	if (result.respuesta == 'error'){
 		  		alert(result.mensaje);
