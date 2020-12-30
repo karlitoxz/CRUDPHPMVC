@@ -122,3 +122,23 @@ personalizar una funcion con comodin para varios formularios:
 				$("[id^=filesdes]").append($(this).get(0).files[i].name+" - ");
 			};
 	});
+
+-------------------------------------------------------------------------------------------------------------------------------
+Activar los menus de un NAV - ADMIN LTE
+
+function menuActive(){
+	/** add active class and stay opened when selected */
+	var url = window.location;
+
+	// for sidebar menu entirely but not cover treeview
+	$('ul.nav-sidebar a').filter(function() {
+	    return this.href == url;
+	}).addClass('active');
+
+	//for treeview
+	$('ul.nav-treeview a').filter(function() {
+	    return this.href == url;
+	}).parentsUntil(".nav-sidebar > .nav-treeview").addClass('menu-open').prev('a').addClass('active');
+}
+
+-------------------------------------------------------------------------------------------------------------------------------
