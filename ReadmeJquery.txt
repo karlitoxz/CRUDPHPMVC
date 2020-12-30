@@ -1,3 +1,26 @@
+Layout AJAX:
+
+$.ajax({
+	url: '/path/to/file',
+	type: 'POST',
+	//dataType: 'json', -Activar cuando se esperan datos JSON
+	data: {param1: 'value1'},
+	//processData: false, -Habilitar para enviar Adjuntos($_FILES)
+	//contentType: false,
+	//beforeSend: function() {alert('cargando..');}, -Gif carga
+})
+.done(function(data) {
+	console.log("data", data);
+})
+.fail(function(jqXHR, textStatus, errorThrown) {
+			console.log("errorThrown", errorThrown);
+			console.log("textStatus", textStatus);
+			console.log("jqXHR", jqXHR);
+			console.log("error");
+});
+
+----------------------------------------------------------------------------------------------------------------
+
 Recorrer y extraer DIVs:
 
 <!DOCTYPE html>
