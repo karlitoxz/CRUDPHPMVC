@@ -90,6 +90,21 @@ contraseña de 8 caracteres minimo una minuscula una Mayuscula y un numero
 if (password.match("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])([a-zA-Z0-9]{8,})$")) {
 }
 
+email:---
+
+	email = $('#email').val();
+
+	filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+
+	if (filter.test(email)) {
+	 	$('#errorEmail').empty();
+	}
+	else{
+		console.log('Email NO valido');
+		$('#errorEmail').empty().append("<strong>Error: </strong> La dirección de correo ingresada no es valida.").show();
+		$('#email').empty().focus();
+	}
+
 
 -----------------------------------------------------------------------------------------------------------------------------
 Avandonar una funcion antes de tiempo:
