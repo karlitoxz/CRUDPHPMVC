@@ -1,0 +1,5 @@
+Auto numerar una columna de una consulta:
+
+	SELECT @numero:=@numero+1 as id, CONCAT(u.nombre,' ',u.apellido) nombre, u.email, u.usuario, r.descripcion,u.activo,u.tokenUser FROM usuarios u INNER JOIN roles r ON u.idRoles = r.id CROSS JOIN (SELECT @numero := 0) a
+
+-----------------------------------------------------------------------------------------------------------
