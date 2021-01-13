@@ -5,3 +5,7 @@ Auto numerar una columna de una consulta:
 	SELECT @numero:=@numero+1 as id, fechaCrea, idRequerimiento, nit, nombre, email FROM usuarios, (SELECT @numero := 0) a WHERE activo = 1 
 
 -----------------------------------------------------------------------------------------------------------
+
+Meses en Español:
+
+	set lc_time_names = 'es_CO'

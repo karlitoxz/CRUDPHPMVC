@@ -180,3 +180,10 @@ function menuActive(){
 }
 
 -------------------------------------------------------------------------------------------------------------------------------
+
+comprimir un JS minify
+
+	https://github.com/terser/terser
+	
+		npm install terser -g
+		terser -c -m -- chat.js > terser_chat.js
