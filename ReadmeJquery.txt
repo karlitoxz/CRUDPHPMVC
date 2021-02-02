@@ -19,6 +19,42 @@ $.ajax({
 			console.log("error");
 });
 
+----ajax --- async/await---
+
+	async function doAjax(args) {
+	    const result = await $.ajax({
+	        url: ajaxurl,
+	        type: 'POST',
+	        data: args
+	    });
+
+	    return result;
+	}
+
+----ajax --- async/await--- mostrando errores:
+
+	async function doAjax(args) {
+	    let result;
+
+	    try {
+	        result = await $.ajax({
+	            url: ajaxurl,
+	            type: 'POST',
+	            data: args
+	        });
+
+	        return result;
+	    } catch (error) {
+	        console.error(error);
+	    }
+	}
+
+
+Llamar a la funcion:
+
+	1. const stuff = await doAjax();
+	2. doAjax().then( (data) => doStuff(data) ) // forma de promesa
+
 ----------------------------------------------------------------------------------------------------------------
 
 Recorrer y extraer DIVs:
