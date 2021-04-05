@@ -34,9 +34,11 @@ class formulariosModelo{
 		if ($resultQuery == 1) {
 			$rowCount = $stmt->rowCount();
 				if ($rowCount > 0) {
-					return $stmt->fetchAll();
+						$respuesta = $stmt->fetchAll();
+						$respuesta['respuesta'] = "ok";
+						return $respuesta;
 				}else{
-					return $result = array("respuesta"=> "error", "mensaje" => "No se encontraron archivos en ese múmero de chat") ;
+					return $result = array("respuesta"=> "error", "mensaje" => "No se encontraron archivos en ese múmero.") ;
 				}
 		}else{
 			print_r(Conexion::conectar()->errorInfo());
@@ -57,9 +59,11 @@ class formulariosModelo{
 		if ($resultQuery == 1) {
 			$rowCount = $stmt->rowCount();
 				if ($rowCount > 0) {
-					return $stmt->fetchAll();
+						$respuesta = $stmt->fetchAll();
+						$respuesta['respuesta'] = "ok";
+						return $respuesta;
 				}else{
-					return $result = array("respuesta"=> "error", "mensaje" => "No se encontraron archivos en ese múmero de chat") ;
+					return $result = array("respuesta"=> "error", "mensaje" => "No se encontraron archivos en ese múmero.") ;
 				}
 		}else{
 			print_r(Conexion::conectar()->errorInfo());
@@ -81,9 +85,11 @@ class formulariosModelo{
 		if ($resultQuery == 1) {
 			$rowCount = $stmt->rowCount();
 				if ($rowCount > 0) {
-					return $stmt->fetchAll();
+						$respuesta = $stmt->fetchAll();
+						$respuesta['respuesta'] = "ok";
+						return $respuesta;
 				}else{
-					return $result = array("respuesta"=> "error", "mensaje" => "No se encontraron archivos en ese múmero de chat") ;
+					return $result = array("respuesta"=> "error", "mensaje" => "No se encontraron archivos en ese múmero.") ;
 				}
 		}else{
 			print_r(Conexion::conectar()->errorInfo());
