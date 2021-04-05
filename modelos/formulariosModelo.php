@@ -29,8 +29,15 @@ class formulariosModelo{
 	static public function mdlSRegistros($tabla){
 		$stmt = Conexion::conectar()->prepare("SELECT *,DATE_FORMAT(fecha,'%d/%m/%Y') as fecha FROM $tabla");
 
-		if ($stmt->execute()) {
-			return $stmt->fetchAll();
+			$resultQuery = $stmt->execute();
+																  
+		if ($resultQuery == 1) {
+			$rowCount = $stmt->rowCount();
+				if ($rowCount > 0) {
+					return $stmt->fetchAll();
+				}else{
+					return $result = array("respuesta"=> "error", "mensaje" => "No se encontraron archivos en ese múmero de chat") ;
+				}
 		}else{
 			print_r(Conexion::conectar()->errorInfo());
 		}
@@ -45,8 +52,15 @@ class formulariosModelo{
 
 		$stmt -> bindParam(":valor", $valor,PDO::PARAM_STR);
 
-		if ($stmt->execute()) {
-			return $stmt->fetch();
+		$resultQuery = $stmt->execute();
+																  
+		if ($resultQuery == 1) {
+			$rowCount = $stmt->rowCount();
+				if ($rowCount > 0) {
+					return $stmt->fetchAll();
+				}else{
+					return $result = array("respuesta"=> "error", "mensaje" => "No se encontraron archivos en ese múmero de chat") ;
+				}
 		}else{
 			print_r(Conexion::conectar()->errorInfo());
 		}
@@ -62,8 +76,15 @@ class formulariosModelo{
 
 		$stmt -> bindParam(":valor", $valor,PDO::PARAM_STR);
 
-		if ($stmt->execute()) {
-			return $stmt->fetch();
+		$resultQuery = $stmt->execute();
+															  
+		if ($resultQuery == 1) {
+			$rowCount = $stmt->rowCount();
+				if ($rowCount > 0) {
+					return $stmt->fetchAll();
+				}else{
+					return $result = array("respuesta"=> "error", "mensaje" => "No se encontraron archivos en ese múmero de chat") ;
+				}
 		}else{
 			print_r(Conexion::conectar()->errorInfo());
 		}
