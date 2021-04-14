@@ -53,3 +53,10 @@ require 'mailsend/PHPMailerAutoload.php';
         echo 'Message has been sent';
     }
  ?>
+
+ ------------------------------Servidor redundante-----------
+ 
+$gloMailHost = "192.168.0.1"
+$gloMailHostRedundant = "192.168.0.2"
+
+ $mail->Host = "$gloMailHost;$gloMailHostRedundant";
