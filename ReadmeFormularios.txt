@@ -250,4 +250,10 @@ PHP conexion:
 
 --------------------------------------------------------------------------------------------------------------------------
 
+Filtrar inputs o variables:
 
+$comentarios = filter_input(INPUT_POST, 'comentarios', FILTER_SANITIZE_STRING);
+//filtrar una variable: 
+
+$file_id = filter_var($datos[0], FILTER_SANITIZE_NUMBER_INT);
+print_r($file_id);
