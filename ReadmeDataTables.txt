@@ -106,7 +106,8 @@ function TraerDataTable(){
 		"columns":[
 			{"data":"NITENT"},
 			{"data":"RAZOC"},
-			{"data":"FECHA", render: function (data) {
+			{"data":"FECHA", render: function (data, type, row, meta) {
+					console.log(row);
 					data = moment(data, "YYYY-MM-DD").format("YYYY-MM-DD");
 			   		return data;
        		 	}
