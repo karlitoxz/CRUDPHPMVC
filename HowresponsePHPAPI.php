@@ -1,4 +1,5 @@
 <?php
+	//PHP puro
 
 	if (isset($_POST['botones'])) {
 		header('Content-type: application/json; charset=utf-8');
@@ -9,8 +10,8 @@
 ?>
 
 <?php
-	
-	    public function dataTable(Request $fideubf){
+	//laravel
+    public function dataTable(Request $fideubf){
         if ($fideubf->ajax()) {
             $observaciones = FISECOBSBF::select('idecli','valorpri','codefe','observ','usuari','fecha','hora')
                             ->where('nitdeu', '=', $fideubf->fideubf)
