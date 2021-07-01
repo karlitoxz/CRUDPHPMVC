@@ -122,6 +122,11 @@ JS:
 			}
 		//Custom data
 				Data.append('formulario', 'formularioJuan');
+				
+		//ver los datos en la consola antes de enviar
+			for (var value of Data.values()) {
+			   console.log(value);
+			}
 		 $.ajax({
 			type: 'POST', 	
 			url: "controladores/formulariosControlador.php",
