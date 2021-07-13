@@ -257,3 +257,17 @@ $(document).ready(function(){
         }
     });
 });
+
+----------------------------------------------------deshabilitar botones y formulario con jquery-------------------------------------------------
+		$(':input').prop('disabled', true);
+		$('#btnConsultar').prop('disabled', true);
+		->
+		$('#btnConsultar').removeAttr("disabled");
+			//habilitar todos los input execpto uno:
+		$(':input').not('#nitsConsultar').removeAttr("disabled");
+		
+		//div con clases oculta:
+			$("#gifCarga").toggleClass('d-none');
+				<div id="gifCarga" class="col-6 text-center d-none">
+    					<img src="./dist/img/GifServiefectivo60x74.gif" alt="Cargando...">
+    				</div>
