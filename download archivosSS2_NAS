@@ -1,0 +1,85 @@
+<?php
+
+require_once '../../../config_avanzado/conexion/conf_1.php';
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+//archivos por GET
+	$codcia = $_GET['codcia'];
+	$carpeta = urldecode($_GET['carpeta']);
+	$archivo = urldecode($_GET['archivo']);
+	$carpetaHTMl = $_GET['carpetaHTMl'];
+	$antiguo = $_GET['antiguo'];
+	
+		//Conecta con el servidor NAS 
+
+		if(!($sshConn = ssh2_connect($gloDbHostAsteriskVirtual, $gloSshPortAsteriskVirtual))) {
+			//echo "<br>No ha conexion".$gloDbHostAsteriskVirtual;
+			exit(1);
+		}else{
+			//echo 'sshconn:ok';
+		}
+
+		//abre llave 		
+		if(!ssh2_auth_pubkey_file($sshConn, "root", "/var/www/ssh_keys/id_rsa.pub", "/var/www/ssh_keys/id_rsa", "")) {
+			ssh2_exec($sshConn, 'exit');
+			//echo "<br>No ha conexion".$gloDbHostAsteriskVirtual.":".$gloSshPortAsteriskVirtual;
+			exit(1);
+		}else{
+			//echo "Conexion con: ".$gloDbHostAsteriskVirtual." : ".$gloSshPortAsteriskVirtual;
+		}
+
+		//Descarga los archivos nuevos
+		if ($antiguo == 0){
+			$localDir = makeDir();
+			$rutaNAS ="/export/nfs_email";
+			$rutaarchivosNAS = "$rutaNAS$carpetaHTMl/$carpeta/$archivo";
+			$rutaLocal = $localDir.$archivo;
+			$descarga = ssh2_scp_recv($sshConn, "$rutaarchivosNAS", "$rutaLocal");
+			var_dump($descarga);
+		}
+		
+		//Descarga los archivos antiguos
+		if ($antiguo == 1){
+			$localDir = makeDir();
+			$rutaNAS ="/usr/share/public/clientes/web/public/consultas/compensar/";
+			$rutaarchivosNAS = "$rutaNAS$codcia/$archivo";
+			$rutaLocal = $localDir.$archivo;
+			$descarga = ssh2_scp_recv($sshConn, "$rutaarchivosNAS", "$rutaLocal");
+			var_dump($descarga);
+		}
+
+		//cierra la conexion
+		ssh2_exec($sshConn, 'exit');
+		
+///Funcion crea directorio para la descarga de archivos
+function makeDir() {
+		$micarpeta = date('YFd_gi');
+				if (!file_exists('./downloads/'.$micarpeta)) {
+				    mkdir('./downloads/'.$micarpeta, 0777);
+				    chmod('./downloads/'.$micarpeta, 0777);
+				}
+		$localDir  = "/var/www/html/ftp/php/downloads/$micarpeta/";
+	return $localDir;
+}
+
+
+///Funcion que descarga el documento	
+function download_file($archivo, $downloadfilename = null) {
+
+        $downloadfilename = $downloadfilename !== null ? $downloadfilename : basename($archivo);
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=' . $downloadfilename);
+        header('Content-Transfer-Encoding: binary');
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($archivo));
+
+        ob_clean();
+        flush();
+        readfile($archivo);
+
+}
+?>
