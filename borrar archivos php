@@ -1,0 +1,21 @@
+//Borrar archivos antiguos de la carpeta
+	function borrarArchivosAntiguos(){
+		$dirFiles = "./downloads/";
+		$dir_open=opendir($dirFiles);
+
+		  while ($current = readdir($dir_open)){
+		    if( $current != "." && $current != "..") {
+		      if(!is_dir($dirFiles.$current)) {
+					//*.xls
+	                $ext = new SplFileInfo($current);
+			        if ($ext->getExtension() == 'xls') {
+			        	unlink($dirFiles.$current);
+			        }
+					//*.zip
+					if ($ext->getExtension() == 'zip') {
+			        	unlink($dirFiles.$current);
+			        }
+		      }
+		    }
+		  }
+	}
