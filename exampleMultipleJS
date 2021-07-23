@@ -1,0 +1,976 @@
+
+$( document ).ready(function() {
+ //Ready---------------------------------------------------------------->
+	//Inicia la aplicacion:
+	traerDialogoAjax('P01');
+	setTimeout(function(){ llenarP01(); }, 400);
+
+ //Ready---------------------------------------------------------------->
+});
+//Variables globales---------------------------------------------------->
+var solucion;
+var solucionA;
+var solucionB;
+//Funciones------------------------------------------------------------->
+
+//Funciones traer dialogos y formularios-----------------------------------------------------------------------------------
+async function traerDialogoAjax(idDialogo){
+	 const result = await $.ajax({
+		type: 'POST', 	
+		url: "controladores/dialogoControlador.php",
+		data: {"dialogo": "ctrSDialogo","idDialogo":idDialogo},
+		});
+	 agregarDialogoChatDerecha(result);
+}
+
+function traerDialogoArrayAjax(idDialogo){
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/dialogoControlador.php",
+		data: {"dialogo": "ctrSDialogoArray","idDialogo":idDialogo},
+		dataType:"json",
+		})
+	  .done(function( data ) {
+	  	agregarDialogoChatDerecha(data.dialogo);
+	 	agregarDialogoChatFooter(data.formulario);
+	  });
+}
+//Funciones traer dialogos y formularios-----------------------------------------------------------------------------------
+
+
+//Funciones agregar textos al chat-----------------------------------------------------------------------------------------
+function agregarDialogoChatDerecha(datos) {
+	 $('#ajaxchat').append(datos);
+	 $("#ajaxchat").animate({ scrollTop: $('#ajaxchat').prop("scrollHeight")}, 1000); 
+}
+
+function agregarDialogoCustomChatDerecha(datos) {
+	texto = "<div class='direct-chat-msg'> <div class='direct-chat-infos clearfix'> <span class='direct-chat-name float-left'>Serviefectivo</span> <span class='direct-chat-timestamp float-right'>"+fechaAhora()+"</span> </div>  <img class='direct-chat-img' src='vistas/dist/img/Serviefectivo_alternativo.png' alt='message user image'>  <div class='direct-chat-text'>"+datos+"</div>  </div>";
+	 $('#ajaxchat').append(texto);
+	 $("#ajaxchat").animate({ scrollTop: $('#ajaxchat').prop("scrollHeight")}, 1000); 
+}
+
+function agregarDialogoChatIzquierda(datos) {
+	texto = "<div class='direct-chat-msg right'> <div class='direct-chat-infos clearfix'> <span class='direct-chat-name float-right'>Usuario</span> <span class='direct-chat-timestamp float-left'>"+fechaAhora()+"</span> </div>  <img class='direct-chat-img' src='vistas/dist/img/user7-128x128.jpg' alt='message user image'> <div class='direct-chat-text'> "+datos+" </div>  </div> ";
+	 $('#ajaxchat').append(texto);
+	 $("#ajaxchat").animate({ scrollTop: $('#ajaxchat').prop("scrollHeight")}, 1000); 
+}
+function agregarDialogoChatFooter(datos) {
+	$('.card-footer').empty();
+	$('#ajaxformulario').append(datos);
+}
+//Funciones agregar textos al chat-----------------------------------------------------------------------------------------
+
+//Funciones interacion con formularios-------------------------------------------------------------------------------------
+function p01opcion(opcion){
+	disableCheckBox();
+	solucion = opcion;
+	var texto = $('#customSwitch'+solucion+'').next('label').text();
+	//$('.card-footer').empty();
+	agregarDialogoChatIzquierda(texto);
+	traerDialogoArrayAjax('P02');
+	setTimeout(function(){ $('#numeDocumento').focus(); }, 200);
+	
+}
+
+async function p02opcion(opcion){
+	tIden = $('#tipoDocumento').val();
+	ttextIden = $( "#tipoDocumento option:selected" ).text();
+	nIden = $('#numeDocumento').val();
+	token = $('#token').val();
+	if (nIden.match(/[0-9]{5,11}$/)) {
+		$('#errorClave').hide();
+//Traer los datos de la cedula digitada
+	datos = "Tipo de identificación es: <strong>"+ttextIden+ "</strong> con numero: <strong>"+ nIden+"</strong>";
+	agregarDialogoChatIzquierda(datos);
+	$('.card-footer').empty();
+		//Mirar si existe el numero de cedula:
+			const result = await $.ajax({
+				url: 'controladores/as400Controlador.php',
+				type: 'POST',
+				dataType: 'json',
+				data: {'ctrSRegistro': nIden, 'token' : token },
+				beforeSend: function() {traerDialogoArrayAjax('CARGANDO');},
+			});
+			switch (result.respuesta) {
+					  case 'ok':
+						//Crear Cookie con los datos de usuario
+							Cookies.set('TIPENT', result[0].TIPENT.trim(), {expires: 0.01});
+							Cookies.set('NITENT', result[0].NITENT.trim(), {expires: 0.01});
+							Cookies.set('RAZSOC', result[0].RAZSOC.trim(), {expires: 0.01});
+							Cookies.set('EMAIL', result[0].EMAIL.trim(), {expires: 0.01});
+							Cookies.set('CIUDAD', result[0].CIUDAD.trim(), {expires: 0.01});
+							Cookies.set('DIRECC', result[0].DIRECC.trim(), {expires: 0.01});
+							Cookies.set('TELCOR', result[0].TELCOR.trim(), {expires: 0.01});
+							Cookies.set('PERDEU', result.PERDEU, {expires: 0.01});
+							cookieDate();
+							setInterval(function(){ compararDate(); }, 9000);
+							//Crear Cookie con los datos de usuario
+							generarToken();
+							traerDialogoArrayAjax('P04');
+							setTimeout(function(){ llenarDatos(); }, 800);
+							setTimeout(function(){ guardarTablaPrincipal(); }, 1000);
+					    break;
+					  case 'noDatos':
+	   						traerDialogoArrayAjax('P02_01');
+							setTimeout(function(){ $('#numeDocumento').val('').focus(); }, 200);
+					  	break;		
+					  default:
+	   						traerDialogoArrayAjax('P02_01');
+							setTimeout(function(){ $('#numeDocumento').val('').focus(); }, 200);
+					    break;
+					}
+		//Mirar si existe el numero de cedula:
+//Traer los datos de la cedula digitada
+	} else {
+			$('#errorClave').show();
+			$('#numeDocumento').val('').focus();
+	}
+
+}
+
+
+async function p04opcion(){
+	claveSeguridad = $('#claveSeguridad').val();
+		if (claveSeguridad.match(/(SERV-[0-9]{4,4})$/)) {
+		$('#errorClave').hide();
+	//Validar si el token es igual
+			const result = await $.ajax({
+				type: 'POST', 	
+				url: "controladores/tokenControlador.php",
+				data: {"tokenDigitado": claveSeguridad},
+				});
+			  		//Validacion de datos
+		  			if (result == 'SI') {
+		  				agregarDialogoChatIzquierda(claveSeguridad);
+		  				seleccionSolucion();
+		  			}else{
+		  				traerDialogoArrayAjax('P04_02');
+		  				setTimeout(function(){ $('#claveSeguridad').val('').focus(); }, 200);
+		  			}
+		  		//Validacion de datos
+	//Validar si el token es igual
+		}
+		else {
+			$('#errorClave').show();
+			setTimeout(function(){ $('#claveSeguridad').val('').focus(); }, 200);
+		}
+}
+
+function P07(){//A
+	
+	solucionA = $('#selectP07').val();
+	P07Text = $( "#selectP07 option:selected" ).text();
+	datos = solucionA+". "+P07Text;
+	agregarDialogoChatIzquierda(datos);
+	seleccionSolucionA(solucionA);
+}
+
+function P08_01(){//A1//E
+	
+	p08_01 = $('#selectP08_01').val();
+	p08_01Text = $( "#selectP08_01 option:selected" ).text();
+	agregarDialogoChatIzquierda(p08_01Text);
+	if (p08_01 == 'SI') {
+    	traerDialogoArrayAjax('P08');
+	} else {
+		traerDialogoArrayAjax('P09');
+		setTimeout(function(){ traerDialogoArrayAjax('P10'); }, 250);
+		setTimeout(function(){ llenarDatos(); }, 500);
+		guardarTablaDetalle(returnOpcion(),"No tiene los documentos ahora.","","");
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 600);
+		setTimeout(function(){ enviarCopiaChat(); }, 800);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1000);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1200);
+	}
+}
+
+function p08opcion(){//A1
+	
+//Enviar formulario al controlador
+	var dataP08 = new FormData();
+	//Form data
+		var form_data = $('#formP08').serializeArray();
+
+		nameArchivos = $("[id^=filesdes]").html();
+		agregarDialogoChatIzquierda(nameArchivos);
+
+		$.each(form_data, function (key, input) {
+			dataP08.append(input.name, input.value);
+				agregarDialogoChatIzquierda(input.value);
+		});
+	//File data
+		var file_data = $('#filesP08')[0].files;
+		for (var i = 0; i < file_data.length; i++) {
+		    dataP08.append("filesP08[]", file_data[i]);
+		}
+	//Custom data
+			dataP08.append('form', 'ctrFormP08');
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/formulariosControlador.php",
+		data: dataP08,
+		dataType: 'json',
+		processData: false,
+    	contentType: false,
+    	beforeSend: function() {traerDialogoArrayAjax('CARGANDO');},
+		})
+	  .done(function( result ) {
+	  	if (result.respuesta == 'error'){
+	  		agregarDialogoCustomChatDerecha(result.mensaje);
+	  		traerDialogoArrayAjax('P08');
+	  	}else{
+	  	setTimeout(function(){ traerDialogoArrayAjax('P12'); }, 200);
+		setTimeout(function(){ llenarDatos(); }, 400);
+		setTimeout(function(){ traerDialogoArrayAjax('P15'); }, 600);
+		setTimeout(function(){ llenarDatos(); }, 800);
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 1000);
+		setTimeout(function(){ enviarCopiaChat(); }, 1200);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1400);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1600);
+	  	}
+
+  	});
+//Enviar formulario al controlador
+}
+
+function P14_01(){//A2
+	
+	p14_01 = $('#selectP14_01').val();
+	p14_01Text = $( "#selectP14_01 option:selected" ).text();
+	agregarDialogoChatIzquierda(p14_01Text);
+	if (p14_01 == 'SI') {
+    	traerDialogoArrayAjax('P14_02');
+	} else {
+		traerDialogoArrayAjax('P09');
+		setTimeout(function(){ traerDialogoArrayAjax('P10'); }, 500);
+		setTimeout(function(){ llenarDatos(); }, 600);
+		guardarTablaDetalle(returnOpcion(),"No tiene los documentos ahora.","","");
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 800);
+		setTimeout(function(){ enviarCopiaChat(); }, 1000);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1200);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1400);
+	}
+}
+
+function P14_02opcion(){//A2
+	
+//Enviar formulario al controlador
+	var dataP14_02 = new FormData();
+	//Form data
+		var form_data = $('#formP14_02').serializeArray();
+
+		nameArchivos = $("[id^=filesdes]").html();
+		agregarDialogoChatIzquierda(nameArchivos);
+
+		$.each(form_data, function (key, input) {
+			dataP14_02.append(input.name, input.value);
+			agregarDialogoChatIzquierda(input.value);
+		});
+	//File data
+		var file_data = $('#filesP14_02')[0].files;
+		for (var i = 0; i < file_data.length; i++) {
+		    dataP14_02.append("filesP14_02[]", file_data[i]);
+		}
+	//Custom data
+			dataP14_02.append('form', 'ctrFormP14_02');
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/formulariosControlador.php",
+		data: dataP14_02,
+		dataType: 'json',
+		processData: false,
+    	contentType: false,
+    	beforeSend: function() {traerDialogoArrayAjax('CARGANDO');},
+		})
+	  .done(function( result ) {
+	  	if (result.respuesta == 'error'){
+	  		agregarDialogoCustomChatDerecha(result.mensaje);
+	  		traerDialogoArrayAjax('P14_02');
+	  	}else{
+	  	setTimeout(function(){ traerDialogoArrayAjax('P12'); }, 200);
+		setTimeout(function(){ llenarDatos(); }, 400);
+		setTimeout(function(){ traerDialogoArrayAjax('P15'); }, 600);
+		setTimeout(function(){ llenarDatos(); }, 800);
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 1000);
+		setTimeout(function(){ enviarCopiaChat(); }, 1200);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1400);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1600);
+	  	}
+
+  	});
+//Enviar formulario al controlador
+}
+
+function P17opcion(){//A3
+	
+//Enviar formulario al controlador
+	var dataP17 = new FormData();
+	//Form data
+		var form_data = $('#formP17').serializeArray();
+
+		nameArchivos = $("[id^=filesdes]").html();
+		agregarDialogoChatIzquierda(nameArchivos);
+
+		$.each(form_data, function (key, input) {
+			dataP17.append(input.name, input.value);
+			agregarDialogoChatIzquierda(input.value);
+		});
+	//File data
+		var file_data = $('#filesP17')[0].files;
+		for (var i = 0; i < file_data.length; i++) {
+		    dataP17.append("filesP17[]", file_data[i]);
+		}
+	//Custom data
+			dataP17.append('form', 'ctrFormP17');
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/formulariosControlador.php",
+		data: dataP17,
+		dataType: 'json',
+		processData: false,
+    	contentType: false,
+    	beforeSend: function() {traerDialogoArrayAjax('CARGANDO');},
+		})
+	  .done(function( result ) {
+	  	console.log (result);
+	  	if (result.respuesta == 'error'){
+	  		agregarDialogoCustomChatDerecha(result.mensaje);
+	  		traerDialogoArrayAjax('P17');
+	  	}else{
+	  	setTimeout(function(){ traerDialogoArrayAjax('P12'); }, 200);
+		setTimeout(function(){ llenarDatos(); }, 400);
+		setTimeout(function(){ traerDialogoArrayAjax('P15'); }, 600);
+		setTimeout(function(){ llenarDatos(); }, 800);
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 1000);
+		setTimeout(function(){ enviarCopiaChat(); }, 1200);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1400);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1600);
+	  	}
+
+  	});
+//Enviar formulario al controlador
+
+}
+
+function P23(){//B
+	
+	solucionB = $('#selectP23').val();
+	P23Text = $( "#selectP23 option:selected" ).text();
+	datosP23 = solucionB+". "+P23Text;
+	agregarDialogoChatIzquierda(datosP23);
+	seleccionSolucionB(solucionB);
+}
+
+function P25opcion(){//B1
+
+//Enviar formulario al controlador
+	var dataP25 = new FormData();
+	//Form data
+		var form_data = $('#formP25').serializeArray();
+
+		nameArchivos = $("[id^=filesdes]").html();
+		agregarDialogoChatIzquierda(nameArchivos);
+
+		$.each(form_data, function (key, input) {
+			dataP25.append(input.name, input.value);
+			agregarDialogoChatIzquierda(input.value);
+		});
+	//File data
+		var file_data = $('#filesP25')[0].files;
+		for (var i = 0; i < file_data.length; i++) {
+		    dataP25.append("filesP25[]", file_data[i]);
+		}
+	//Custom data
+			dataP25.append('form', 'ctrFormP25');
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/formulariosControlador.php",
+		data: dataP25,
+		dataType: 'json',
+		processData: false,
+    	contentType: false,
+    	beforeSend: function() {traerDialogoArrayAjax('CARGANDO');},
+		})
+	  .done(function( result ) {
+	  	if (result.respuesta == 'error'){
+	  		agregarDialogoCustomChatDerecha(result.mensaje);
+	  		traerDialogoArrayAjax('P25');
+	  	}else{
+	  	setTimeout(function(){ traerDialogoArrayAjax('P31'); }, 200);
+		setTimeout(function(){ llenarDatos(); }, 400);
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 600);
+		setTimeout(function(){ enviarCopiaChat(); }, 800);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1000);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1200);
+	  	}
+
+  	});
+//Enviar formulario al controlador	
+
+}
+
+function P28opcion(){//B2
+	
+//Enviar formulario al controlador
+	var dataP28 = new FormData();
+	//Form data
+		var form_data = $('#formP28').serializeArray();
+
+		nameArchivos = $("[id^=filesdes]").html();
+		agregarDialogoChatIzquierda(nameArchivos);
+
+		$.each(form_data, function (key, input) {
+			dataP28.append(input.name, input.value);
+			agregarDialogoChatIzquierda(input.value);
+		});
+	//File data
+		var file_data = $('#filesP28')[0].files;
+		for (var i = 0; i < file_data.length; i++) {
+		    dataP28.append("filesP28[]", file_data[i]);
+		}
+	//Custom data
+			dataP28.append('form', 'ctrFormP28');
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/formulariosControlador.php",
+		data: dataP28,
+		dataType: 'json',
+		processData: false,
+    	contentType: false,
+    	beforeSend: function() {traerDialogoArrayAjax('CARGANDO');},
+		})
+	  .done(function( result ) {
+	  	if (result.respuesta == 'error'){
+	  		agregarDialogoCustomChatDerecha(result.mensaje);
+	  		traerDialogoArrayAjax('P28');
+	  	}else{
+	  	setTimeout(function(){ traerDialogoArrayAjax('P31'); }, 200);
+		setTimeout(function(){ llenarDatos(); }, 400);
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 600);
+		setTimeout(function(){ enviarCopiaChat(); }, 800);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1000);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1200);
+	  	}
+
+  	});
+//Enviar formulario al controlador	
+
+}
+
+function P30opcion(){//B3
+	
+//Enviar formulario al controlador
+	var dataP30 = new FormData();
+	//Form data
+		var form_data = $('#formP30').serializeArray();
+
+		nameArchivos = $("[id^=filesdes]").html();
+		agregarDialogoChatIzquierda(nameArchivos);
+
+		$.each(form_data, function (key, input) {
+			dataP30.append(input.name, input.value);
+			agregarDialogoChatIzquierda(input.value);
+		});
+	//File data
+		var file_data = $('#filesP30')[0].files;
+		for (var i = 0; i < file_data.length; i++) {
+		    dataP30.append("filesP30[]", file_data[i]);
+		}
+	//Custom data
+			dataP30.append('form', 'ctrFormP30');
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/formulariosControlador.php",
+		data: dataP30,
+		dataType: 'json',
+		processData: false,
+    	contentType: false,
+    	beforeSend: function() {traerDialogoArrayAjax('CARGANDO');},
+		})
+	  .done(function( result ) {
+	  	if (result.respuesta == 'error'){
+	  		agregarDialogoCustomChatDerecha(result.mensaje);
+	  		traerDialogoArrayAjax('P30');
+	  	}else{
+	  	setTimeout(function(){ traerDialogoArrayAjax('P31'); }, 200);
+		setTimeout(function(){ llenarDatos(); }, 400);
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 600);
+		setTimeout(function(){ enviarCopiaChat(); }, 800);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1000);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1200);
+	  	}
+
+  	});
+//Enviar formulario al controlador
+
+}
+
+function P33opcion(){//B4
+	
+//Enviar formulario al controlador
+	var dataP33 = new FormData();
+	//Form data
+		var form_data = $('#formP33').serializeArray();
+
+		$.each(form_data, function (key, input) {
+			dataP33.append(input.name, input.value);
+			agregarDialogoChatIzquierda(input.value);
+		});
+	//Custom data
+			dataP33.append('idChatOpciones', returnOpcion())
+			dataP33.append('guardar', 'DetalleActDatos');
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/guardarControlador.php",
+		data: dataP33,
+		processData: false,
+    	contentType: false,
+		})
+	  .done(function( result ) {
+	  	setTimeout(function(){ traerDialogoArrayAjax('P36'); }, 200);
+		setTimeout(function(){ llenarDatos(); }, 400);
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 600);
+		setTimeout(function(){ enviarCopiaChat(); }, 800);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1000);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1200);
+  	});
+//Enviar formulario al controlador
+
+}
+
+function P38opcion(){//D
+	
+//Enviar formulario al controlador
+	var dataP38 = new FormData();
+	//Form data
+		var form_data = $('#formP38').serializeArray();
+
+		$.each(form_data, function (key, input) {
+			dataP38.append(input.name, input.value);
+			agregarDialogoChatIzquierda(input.value);
+		});
+	//Custom data
+			dataP38.append('idChatOpciones', returnOpcion())
+			dataP38.append('guardar', 'DetalleActDatos');
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/guardarControlador.php",
+		data: dataP38,
+		processData: false,
+    	contentType: false,
+		})
+	  .done(function( result ) {
+	  	setTimeout(function(){ traerDialogoArrayAjax('P39'); }, 200);
+		setTimeout(function(){ llenarDatos(); }, 400);
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 600);
+		setTimeout(function(){ enviarCopiaChat(); }, 800);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1000);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1200);
+  	});
+//Enviar formulario al controlador
+
+}
+
+
+function P45opcion(){//F-A4
+	
+	//Enviar formulario al controlador
+	var dataP45 = new FormData();
+	//Form data
+		var form_data = $('#formP45').serializeArray();
+
+		$.each(form_data, function (key, input) {
+			dataP45.append(input.name, input.value);
+			agregarDialogoChatIzquierda(input.value);
+		});
+	//Custom data
+			dataP45.append('idChatOpciones', returnOpcion())
+			dataP45.append('guardar', 'DetalleActDatos');
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/guardarControlador.php",
+		data: dataP45,
+		processData: false,
+    	contentType: false,
+		})
+	  .done(function( result ) {
+	  	setTimeout(function(){ traerDialogoArrayAjax('P12'); }, 200);
+	  	setTimeout(function(){ llenarDatos(); }, 400);
+		setTimeout(function(){ traerDialogoArrayAjax('P15'); }, 600);
+		setTimeout(function(){ llenarDatos(); }, 800);
+		setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 1000);
+		setTimeout(function(){ enviarCopiaChat(); }, 1200);
+		setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1400);
+		setTimeout(function(){ guardarDetalleAs400(); }, 1600);
+  	});
+//Enviar formulario al controlador
+}
+
+function generarToken(){
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/tokenControlador.php",
+		data: {"token": "tokenCorreo"},
+		})
+	  .done(function( result ) {
+	  	console.log(result);
+	  });
+}
+
+//Funciones para llenar datos del usuario------------------------
+
+function llenarP01(){
+		//Traer datos de la categorias:
+			$.ajax({
+				url: 'controladores/dialogoControlador.php',
+				type: 'POST',
+				dataType: 'json',
+				data: {'idSolucionPadre': 'todas'},
+			})
+			.done(function(datos) {
+		       	for(var i = 0; i < datos.length; i++) {
+					divP01 = `<div class='form-group'> <div class='custom-control custom-switch'> <input type='checkbox' class='custom-control-input' onclick='p01opcion("${datos[i].idSolucionPadre}");' id='customSwitch${datos[i].idSolucionPadre}'> <label class='custom-control-label' for='customSwitch${datos[i].idSolucionPadre}'>${datos[i].idSolucionPadre} ${datos[i].descripcionSPadre}</label> </div> </div>`;
+					$('#divp01').append(divP01);
+		      	}
+
+				//Datos traidos
+			});
+		//Traer datos de la categorias:
+}
+
+function llenarP07(){
+		//Traer datos de la categoria A
+			$.ajax({
+				url: 'controladores/dialogoControlador.php',
+				type: 'POST',
+				dataType: 'json',
+				data: {'idSolucionPadre': 'A'},
+			})
+			.done(function(datos) {
+		       	for(var i = 0; i < datos.length; i++) {
+		       		if (i == 0) {
+					divP07 = `<option value='${datos[i].idSolucionhija}' selected>'${datos[i].descripcionSHija}'</option>`;
+					$('#selectP07').append(divP07);
+		       		} else {
+					divP07 = `<option value='${datos[i].idSolucionhija}'>'${datos[i].descripcionSHija}'</option>`;
+					$('#selectP07').append(divP07);
+		       		}
+		      	}
+
+				//Datos traidos
+			});
+		//Traer datos de la categoria A
+}
+
+function llenarDatos(){
+	$('.emailUsuario').empty().append(Cookies.get('EMAIL'));
+	$('.nombreUsuario').empty().append(Cookies.get('RAZSOC'));	
+	$('.idRequerimiento').empty().append(Cookies.get('idRequerimiento'));
+	$('.perdeuUsuario').empty().append(Cookies.get('PERDEU'));
+}
+
+function llenarP23(){
+		//Traer datos de la categoria B
+			$.ajax({
+				url: 'controladores/dialogoControlador.php',
+				type: 'POST',
+				dataType: 'json',
+				data: {'idSolucionPadre': 'B'},
+			})
+			.done(function(datos) {
+		       	for(var i = 0; i < datos.length; i++) {
+		       		if (i == 0) {
+		       			divP23 = `<option value='${datos[i].idSolucionhija}' selected>'${datos[i].descripcionSHija}'</option>`;
+		       			$('#selectP23').append(divP23);
+		       		} else {
+		       			divP23 = `<option value='${datos[i].idSolucionhija}'>'${datos[i].descripcionSHija}'</option>`;
+		       			$('#selectP23').append(divP23);
+		       		}	
+		      	}
+
+				//Datos traidos
+			});
+		//Traer datos de la categoria B
+
+}
+
+function llenarP38(){
+		$('#telefonoFormP38').val(Cookies.get('TELCOR'));
+		$('#correoFormP38').val(Cookies.get('EMAIL'));
+		$('#dirFormP38').val(Cookies.get('DIRECC'));
+}
+
+function llenarP33(){
+		$('#telefonoFormP33').val(Cookies.get('TELCOR'));
+		$('#correoFormP33').val(Cookies.get('EMAIL'));
+		$('#dirFormP33').val(Cookies.get('DIRECC'));
+}
+
+function llenarP45(){
+		$('#telefonoFormP45').val(Cookies.get('TELCOR'));
+		$('#correoFormP45').val(Cookies.get('EMAIL'));
+		$('#dirFormP45').val(Cookies.get('DIRECC'));
+}
+//Funciones para llenar datos del usuario------------------------
+
+//Funciones ala espera de una accion en formularios---------------
+	$("#ajaxformulario").on("change","[id^=files]", function(){
+		$("[id^=filesdes]").empty();
+		var count_files = $(this).get(0).files.length;
+			for (var i = 0; i < count_files; i++) {
+				$("[id^=filesdes]").append($(this).get(0).files[i].name+" - ");
+			};
+	});
+
+	$("#ajaxformulario").on("change", "#calificacion", function(){
+		calificacion = $('input[name=rating]:checked').val();
+		guardarTablaDetalle(returnOpcion(),"Envio Final",calificacion,"");
+		$('.overlay').css("display", "block");
+	});
+
+
+//Funciones ala espera de una accion en formularios---------------
+
+//Funciones interacion con formularios-------------------------------------------------------------------------------------
+
+//Funciones seleccionar soluciones-------------------------------------------------------------------------------------
+
+function seleccionSolucion(){
+		
+		setTimeout(function(){ guardarTablaDetalle(solucion, "OpcionPrincipal", "",""); }, 500);
+
+		switch (solucion) {
+			  case 'A':
+			  		//Quiero solicitar estado de cuenta.
+			    	traerDialogoArrayAjax('P07');
+			    	setTimeout(function(){ llenarP07(); }, 400);
+			    	setTimeout(function(){ llenarDatos(); }, 600);
+			    break;
+			  case 'B':
+			  		//Cambié mi estado de la afiliación
+			    	traerDialogoArrayAjax('P23');
+			    	setTimeout(function(){ llenarP23(); }, 400);
+			    break;
+			  case 'C':
+			  		//Deseo saber formas de pago y plazo.
+			    	traerDialogoArrayAjax('P35');
+			    	setTimeout(function(){ llenarDatos(); }, 200);
+			    	setTimeout(function(){ traerDialogoArrayAjax('P36'); }, 400);
+			    	setTimeout(function(){ llenarDatos(); }, 600);
+			    	setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 800);
+	    			setTimeout(function(){ enviarCopiaChat(); }, 1000);
+			    	setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1200);
+			    	setTimeout(function(){ guardarDetalleAs400(); }, 1400);
+			    break;
+			  case 'D':
+			  		//Deseo hacer un acuerdo de pago.
+			    	traerDialogoArrayAjax('P38');
+			    	setTimeout(function(){ llenarP38(); }, 400);
+			    	setTimeout(function(){ llenarDatos(); }, 600);
+			    break;
+			  case 'E':
+			  		//Ya pagué.
+			    	traerDialogoArrayAjax('P08_01');
+			    break;
+			  case 'F':
+			  		//Otros.
+			    	traerDialogoArrayAjax('P45');
+			    	setTimeout(function(){ llenarP45(); }, 400);
+			    	setTimeout(function(){ llenarDatos(); }, 600);
+			    break;
+		}
+}
+
+function seleccionSolucionA(){
+		switch (solucionA) {
+			  case 'A1':
+			  		//Es un error ya efectué el pago
+			    	traerDialogoArrayAjax('P08_01');
+			    break;
+			  case 'A2':
+			  		//Cambie de estado de afiliación
+			    	traerDialogoArrayAjax('P14_01');
+			    break;
+			  case 'A3':
+			  		//Salí del país
+			    	traerDialogoArrayAjax('P17');
+			    break;
+			  case 'A4':
+			  		//Cambié de EPS
+			  		traerDialogoArrayAjax('P45');
+			    	setTimeout(function(){ llenarP45(); }, 400);
+			    	setTimeout(function(){ llenarDatos(); }, 600);
+			    break;
+			  case 'A5':
+			  		//Olvide hacer el pago, pero quiero pagar
+			    	traerDialogoArrayAjax('P21');
+			    	setTimeout(function(){ traerDialogoArrayAjax('P22'); }, 200);
+			    	setTimeout(function(){ traerDialogoArrayAjax('P36'); }, 400);
+			    	setTimeout(function(){ llenarDatos(); }, 600);
+			    	setTimeout(function(){ guardarTablaDetalle(returnOpcion(),"CopiaChat","",extraerChat()); }, 800);
+	    			setTimeout(function(){ enviarCopiaChat(); }, 1000);
+			    	setTimeout(function(){ traerDialogoArrayAjax('CALIFICACION'); }, 1200);
+			    	setTimeout(function(){ guardarDetalleAs400(); }, 1400);
+			    break;
+		}
+}
+
+function seleccionSolucionB(){
+		switch (solucionB) {
+			  case 'B1':
+			  		//Tengo un contrato con una empresa.
+			  		traerDialogoArrayAjax('P25');
+			    break;
+			  case 'B2':
+			  		//Ya me pensione.
+			  		traerDialogoArrayAjax('P28');
+			  		setTimeout(function(){ llenarDatos(); }, 400);
+			    break;
+			  case 'B3':
+			  		//Finalicé un contrato de prestación de servicios.
+			  		traerDialogoArrayAjax('P30');
+			  		setTimeout(function(){ llenarDatos(); }, 400);
+			    break;
+			  case 'B4':
+			  		//Perdí mi empleo y ahora soy beneficiario familiar.
+			  		traerDialogoArrayAjax('P33');
+			  		setTimeout(function(){ llenarP33(); }, 400);
+			  		setTimeout(function(){ llenarDatos(); }, 600);
+			    break;
+		}
+}
+//Funciones seleccionar soluciones-------------------------------------------------------------------------------------
+
+
+//Funciones del DOM--------------------------------------------------------------------
+
+function disableCheckBox(){
+	$('.custom-control-input').attr('disabled',true);
+}
+
+function returnOpcion(){
+	if (solucionA != null) {
+		idChatOpciones = solucionA;
+	}else{
+		if (solucionB != null) {
+			idChatOpciones = solucionB;
+		}else{
+			idChatOpciones = solucion;
+		}
+	}
+	return idChatOpciones;
+}
+
+function fechaAhora(){
+	var fechaAhora = $.datepicker.formatDate('yy/mm/dd', new Date());
+	return fechaAhora;
+}
+
+function ajustarTamano(){
+	var pantalla = $(window).height();
+	var header = $(".card-header").height();
+	var footer = 63*2;
+  	tamanoChat = pantalla-header-(footer);
+ 	$('.direct-chat-messages').height(tamanoChat);
+}
+
+function cookieDate(){
+	var treintaMinutos = new Date(new Date().getTime() + 30 * 60 * 1000);
+	Cookies.set('DATE',treintaMinutos,{ expires: 0.01 });
+}
+
+function compararDate(){
+	var ahora = new Date();
+	var treintaMinutos = Cookies.get('DATE');
+	if (ahora > Date.parse(treintaMinutos)) {
+		texto = 'El tiempo de sesión a expirado y será re direccionado a la página de inicio.';
+		agregarDialogoCustomChatDerecha(texto);
+		guardarTablaDetalle(returnOpcion(),"Sesión expiro.","","");
+		setTimeout(function(){ window.location="index.php"; }, 5000);
+	}
+}
+
+function extraerChat(){
+		var dialogo = [];
+	    $(".direct-chat-msg").each(function(index,element){
+	     	 if( $(this).hasClass('right') ){
+	     	 	text = $(this).text();
+    			dialogo.push('-> <strong>'+text+'</strong><br>');
+  			}else{
+  				fecha = $(this).find('.direct-chat-timestamp').html();
+  				text = $(this).children('.direct-chat-text').html();
+  				dialogo.push(fecha+'<br>');
+    			dialogo.push('-> Serviefectivo: '+text+'<br>');
+  			}
+    	});
+    return JSON.stringify(dialogo);
+}
+
+//Funciones del DOM--------------------------------------------------------------------
+
+//Funciones guardar informacion---------------------------------------------------------------------------------------
+function guardarTablaPrincipal(){
+	 $.ajax({
+		type: 'POST', 	
+		url: "controladores/guardarControlador.php",
+		dataType: 'json',
+		data: {'guardar': 'Principal'},
+		})
+	  .done(function(result) {
+	   Cookies.set('idRequerimiento', result.idRequerimiento, {expires: 0.01});
+  	});
+}
+
+function guardarTablaDetalle(idChatOpciones,observaciones,calificacion,copiaChat){
+
+//Enviar formulario al controlador
+	var dataDetalle = new FormData();
+	//Custom data
+			dataDetalle.append('guardar', 'Detalle');
+			dataDetalle.append('idChatOpciones', idChatOpciones);
+			dataDetalle.append('observaciones', observaciones);
+			dataDetalle.append('calificacion', calificacion);
+			dataDetalle.append('copiaChat', copiaChat);
+		 $.ajax({
+			type: 'POST', 	
+			url: 'controladores/guardarControlador.php',
+			/*dataType: 'json',*/
+			data: dataDetalle,
+			processData: false,
+    		contentType: false,
+			})
+		  .done(function(result) {
+	  	});
+}
+
+function enviarCopiaChat(){
+	nombreUsuario = Cookies.get('RAZSOC');
+	emailUsuario = Cookies.get('EMAIL');
+	dialogo = extraerChat();
+	idRequerimiento = Cookies.get('idRequerimiento');
+	//enviar datos al controlador
+		$.ajax({
+			url: 'controladores/correoControlador.php',
+			type: 'POST',
+			data: {'CopiaChat':'ctrCopiaChat','nombreUsuario' : nombreUsuario,'email' : emailUsuario, 'copiaChat' : dialogo, 'idRequerimiento': idRequerimiento},
+		})
+		.done(function(result) {
+		});
+	//enviar datos al controlador
+}
+
+function guardarDetalleAs400(){
+	//enviar datos al controlador
+		$.ajax({
+			url: 'controladores/as400Controlador.php',
+			type: 'POST',
+			data: {'ctrGuardar':'ctrGuardarDetalle'},
+		})
+		.done(function() {
+		});
+	//enviar datos al controlador
+}
+
+//Funciones guardar informacion---------------------------------------------------------------------------------------
+
