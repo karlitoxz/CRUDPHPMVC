@@ -1,34 +1,47 @@
 <?php 
 
-function calcularDV($nit) {
+class calcularDigitoVerificacion{
 
-	$nit = intval(filter_var($nit, FILTER_SANITIZE_NUMBER_INT));
+	static public function calcularDV($nit) {
 
-    if (! is_numeric($nit)) {
-        return false;
-    }
+		$nit = intval(filter_var($nit, FILTER_SANITIZE_NUMBER_INT));
 
-    $largo = strlen($nit)-1;
-    $posicion = $largo;
- 
-    $array = array(3,7,13,17,19,23,29,37,41,43,47,53,59,67,71);
- 	$nC = 0;
+	    if (! is_numeric($nit)) {
+	        return false;
+	    }
+
+	    $largo = strlen($nit)-1;
+	    $posicion = $largo;
+	 
+	    $array = array(3,7,13,17,19,23,29,37,41,43,47,53,59,67,71);
+
+	 	$nC = 0;
 
 
-	for ($i=0; $i<=$largo; $i++) {
-		$nC += substr($nit, $posicion , 1)*$array[$i];
-		$posicion--;
-    }
+		for ($i=0; $i<=$largo; $i++) {
+			$nC += substr($nit, $posicion , 1)*$array[$i];
+			$posicion--;
+	    }
 
-    $nC = $nC%11;
+	    $nC = $nC%11;
 
-    $nC = 11 - $nC;
-
-    return $nC;
-    
+	    switch ($nC) {
+	    	case 0:
+	    			return $nC;
+	    		break;
+	    	case 1:
+	    			return $nC;
+	    		break;
+	    	
+	    	default:
+	    			return $nC = 11 - $nC;
+	    		break;
+	    }
+	    
+	}
 }
-//Se debe ingresar el NIT sin comas puntos etc...
-echo 'El digito de verificación es: ' . calcularDV(44223352);
 
+$dv = calcularDigitoVerificacion::calcularDV(43256262);
+echo $dv;
 
  ?>
