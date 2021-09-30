@@ -1,0 +1,13 @@
+Cargar una variable en toda la clase:
+
+require 'app/Calculadora.php';
+
+  final class CalculadoraTest extends TestCase
+    {
+      private $calc;
+
+      //Inicializar las variable $calc
+      public function setUp():void{
+        $this->calc = new Calculadora;
+      }
+    }
